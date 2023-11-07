@@ -1,4 +1,7 @@
 # NTDLS.Persistence
+
+📦 Be sure to check out the NuGet pacakge: https://www.nuget.org/packages/NTDLS.Persistence
+
 Helpers for reading and writing serialized objects to/from files. Helpful for configuration files.
 
 ```cs
