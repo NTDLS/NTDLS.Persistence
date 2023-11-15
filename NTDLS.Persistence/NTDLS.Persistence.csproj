@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -19,10 +19,12 @@
     <RepositoryUrl>https://github.com/NTDLS/NTDLS.Persistence</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>serialization;disk;persistence</PackageTags>
-    <PackageReleaseNotes>Initial release.</PackageReleaseNotes>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <PackageReleaseNotes>
+      net8
+    </PackageReleaseNotes>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
+    <VersionPrefix>1.0.1</VersionPrefix>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <Description>Helpers for reading and writing serialized objects to/from files. Helpful for configuration files.</Description>
   </PropertyGroup>
