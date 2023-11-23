@@ -20,11 +20,11 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>serialization;disk;persistence</PackageTags>
     <PackageReleaseNotes>
-      net8
+      Added optional serialization encryption provider.
     </PackageReleaseNotes>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <FileVersion>1.0.1</FileVersion>
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
+    <VersionPrefix>1.1.0</VersionPrefix>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <Description>Helpers for reading and writing serialized objects to/from files. Helpful for configuration files.</Description>
   </PropertyGroup>
