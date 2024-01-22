@@ -26,6 +26,8 @@
     <FileVersion>1.2.0</FileVersion>
     <VersionPrefix>1.2.0</VersionPrefix>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Description>Helpers for reading and writing serialized objects to/from files. Helpful for configuration files.</Description>
   </PropertyGroup>
 
