@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -12,7 +12,7 @@
     <Authors>NetworkDLS</Authors>
     <Company>NetworkDLS</Company>
     <Product>NTDLS.Persistence</Product>
-    <Copyright>Copyright © 2023 NetworkDLS</Copyright>
+    <Copyright>Copyright © 2024 NetworkDLS</Copyright>
     <PackageProjectUrl>https://github.com/NTDLS/NTDLS.Persistence</PackageProjectUrl>
     <PackageIcon>Image.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -20,11 +20,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>serialization;disk;persistence</PackageTags>
     <PackageReleaseNotes>
-      Renamed classes to reflect the type of persistence they provide.
+      Corrected license.
     </PackageReleaseNotes>
-    <AssemblyVersion>1.2.0</AssemblyVersion>
-    <FileVersion>1.2.0</FileVersion>
-    <VersionPrefix>1.2.0</VersionPrefix>
+    <Version>1.2.1</Version>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
