@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -12,7 +12,7 @@
     <Authors>NetworkDLS</Authors>
     <Company>NetworkDLS</Company>
     <Product>NTDLS.Persistence</Product>
-    <Copyright>Copyright © 2024 NetworkDLS</Copyright>
+    <Copyright>Copyright © 2025 NetworkDLS</Copyright>
     <PackageProjectUrl>https://github.com/NTDLS/NTDLS.Persistence</PackageProjectUrl>
     <PackageIcon>Image.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -22,7 +22,7 @@
     <PackageReleaseNotes>
       Corrected license.
     </PackageReleaseNotes>
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
