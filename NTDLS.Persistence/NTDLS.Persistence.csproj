@@ -20,18 +20,14 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>serialization;disk;persistence</PackageTags>
     <PackageReleaseNotes>
-      Corrected license.
+      Removed logo from package.
     </PackageReleaseNotes>
-    <Version>1.2.2</Version>
+    <Version>1.2.3</Version>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Description>Helpers for reading and writing serialized objects to/from files. Helpful for configuration files.</Description>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="Image.ico" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\Images\Image.png">
