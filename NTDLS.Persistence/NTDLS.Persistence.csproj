@@ -20,9 +20,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>serialization;disk;persistence</PackageTags>
     <PackageReleaseNotes>
-      Removed logo from package.
+      Added delete and better encryption provider.
     </PackageReleaseNotes>
-    <Version>1.2.3</Version>
+    <Version>1.3.0</Version>
     <EnableNETAnalyzers>False</EnableNETAnalyzers>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>

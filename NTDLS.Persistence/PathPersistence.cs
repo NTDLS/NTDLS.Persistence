@@ -8,17 +8,22 @@ namespace NTDLS.Persistence
     /// </summary>
     public class PathPersistence
     {
+
         /// <summary>
-        /// Delegate of encryption/decryption to use used after serialization and before deserialization.
+        /// Deletes a persistent file from the disk
         /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
-        public delegate byte[] EncryptionProvider(byte[] bytes);
+        public static void DeleteFromDisk(string directoryPath, string applicationName, Type objectType)
+        {
+            var dataPath = Path.Combine(directoryPath, applicationName);
+            string typeName = objectType.IsGenericType ? objectType.GetGenericArguments()[0].Name : objectType.Name;
+            string dataFilePath = Path.Combine(dataPath, $"{typeName}.json");
+            File.Delete(dataFilePath);
+        }
 
         /// <summary>
         /// Json serializes an object and saves it to the disk.
         /// </summary>
-        public static void SaveToDisk<T>(string directoryPath, string applicationName, T obj, EncryptionProvider? encryptionProvider = null)
+        public static void SaveToDisk<T>(string directoryPath, string applicationName, T obj, IEncryptionProvider? encryptionProvider = null)
         {
             var dataPath = Path.Combine(directoryPath, applicationName);
 
@@ -35,7 +40,7 @@ namespace NTDLS.Persistence
 
             if (encryptionProvider != null)
             {
-                jsonBytes = encryptionProvider(jsonBytes);
+                jsonBytes = encryptionProvider.Encrypt(jsonBytes);
             }
 
             File.WriteAllBytes(dataFilePath, jsonBytes);
@@ -44,7 +49,7 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Json serializes an object and saves it to the disk.
         /// </summary>
-        public static void SaveToDisk<T>(string directoryPath, string applicationName, T obj, JsonSerializerSettings settings, EncryptionProvider? encryptionProvider = null)
+        public static void SaveToDisk<T>(string directoryPath, string applicationName, T obj, JsonSerializerSettings settings, IEncryptionProvider? encryptionProvider = null)
         {
             var dataPath = Path.Combine(directoryPath, applicationName);
 
@@ -61,7 +66,7 @@ namespace NTDLS.Persistence
 
             if (encryptionProvider != null)
             {
-                jsonBytes = encryptionProvider(jsonBytes);
+                jsonBytes = encryptionProvider.Encrypt(jsonBytes);
             }
 
             File.WriteAllBytes(dataFilePath, jsonBytes);
@@ -70,7 +75,7 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T? LoadFromDisk<T>(string directoryPath, string applicationName, EncryptionProvider? encryptionProvider = null)
+        public static T? LoadFromDisk<T>(string directoryPath, string applicationName, IEncryptionProvider? encryptionProvider = null)
         {
             var dataPath = Path.Combine(directoryPath, applicationName);
 
@@ -89,7 +94,7 @@ namespace NTDLS.Persistence
 
                 if (encryptionProvider != null)
                 {
-                    jsonBytes = encryptionProvider(jsonBytes);
+                    jsonBytes = encryptionProvider.Decrypt(jsonBytes);
                 }
 
                 var obj = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(jsonBytes));
@@ -101,7 +106,7 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T LoadFromDisk<T>(string directoryPath, string applicationName, T defaultResult, EncryptionProvider? encryptionProvider = null)
+        public static T LoadFromDisk<T>(string directoryPath, string applicationName, T defaultResult, IEncryptionProvider? encryptionProvider = null)
         {
             var result = LoadFromDisk<T>(directoryPath, applicationName, encryptionProvider);
             if (result == null)
