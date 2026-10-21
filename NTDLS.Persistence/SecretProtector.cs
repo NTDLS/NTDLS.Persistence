@@ -130,8 +130,11 @@ namespace NTDLS.Persistence
                     return _key;
                 }
 
-                var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "NTDLS.Persistence");
-                var path = Path.Combine(folder, "key.bin");
+                // The key is per-user (e.g. ~/.local/share) because the machine-wide folder (e.g. /usr/share) is
+                //  generally not writable by ordinary users. A key already created in the machine-wide folder is still honored.
+                var legacyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "NTDLS.Persistence", "key.bin");
+                var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NTDLS.Persistence");
+                var path = File.Exists(legacyPath) ? legacyPath : Path.Combine(folder, "key.bin");
 
                 if (File.Exists(path))
                 {
@@ -152,9 +155,20 @@ namespace NTDLS.Persistence
                     options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
                 }
 
-                using (var stream = new FileStream(path, options))
+                try
                 {
+                    using var stream = new FileStream(path, options);
                     stream.Write(key);
+                }
+                catch (IOException) when (File.Exists(path))
+                {
+                    // Another process created the key first; use its key rather than ours.
+                    var existing = File.ReadAllBytes(path);
+                    if (existing.Length != KeySize)
+                    {
+                        throw new InvalidDataException($"The key file '{path}' is not valid.");
+                    }
+                    return _key = existing;
                 }
 
                 return _key = key;

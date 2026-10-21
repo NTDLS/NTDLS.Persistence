@@ -16,8 +16,8 @@ namespace NTDLS.Persistence
         {
             var dataPath = Path.Combine(directoryPath, applicationName);
             string typeName = objectType.IsGenericType ? objectType.GetGenericArguments()[0].Name : objectType.Name;
-            string dataFilePath = Path.Combine(dataPath, $"{typeName}.json");
-            File.Delete(dataFilePath);
+            File.Delete(Path.Combine(dataPath, $"{typeName}.json"));
+            File.Delete(Path.Combine(dataPath, $"{typeName}.bin"));
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T? LoadFromDiskProtected<T>(string directoryPath, string applicationName, ICompressionProvider? compressionProvider = null)
+        public static T? LoadFromDiskProtected<T>(string directoryPath, string applicationName, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
         {
             var dataPath = Path.Combine(directoryPath, applicationName);
 
@@ -96,16 +96,15 @@ namespace NTDLS.Persistence
             var type = typeof(T);
             string typeName = type.IsGenericType ? type.GetGenericArguments()[0].Name : type.Name;
 
-            string dataFilePath = Path.Combine(dataPath, $"{typeName}.json");
+            string dataFilePath = Path.Combine(dataPath, $"{typeName}.bin");
             if (File.Exists(dataFilePath))
             {
-                var bytes = File.ReadAllBytes(dataFilePath);
-                bytes = SecretProtector.Unprotect(bytes, out _);
+                var bytes = SecretProtector.Unprotect(File.ReadAllBytes(dataFilePath), out _) ?? [];
                 if (compressionProvider != null)
                 {
                     bytes = compressionProvider.Decompress(bytes);
                 }
-                var obj = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(bytes ?? []));
+                var obj = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(bytes), settings);
                 return obj;
             }
             return default;
@@ -114,9 +113,9 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T LoadFromDiskProtected<T>(string directoryPath, string applicationName, T defaultResult, ICompressionProvider? compressionProvider = null)
+        public static T LoadFromDiskProtected<T>(string directoryPath, string applicationName, T defaultResult, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
         {
-            var result = LoadFromDiskProtected<T>(directoryPath, applicationName, compressionProvider);
+            var result = LoadFromDiskProtected<T>(directoryPath, applicationName, compressionProvider, settings);
             if (result == null)
             {
                 return defaultResult;
@@ -127,7 +126,7 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T? LoadFromDisk<T>(string directoryPath, string applicationName, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null)
+        public static T? LoadFromDisk<T>(string directoryPath, string applicationName, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
         {
             var dataPath = Path.Combine(directoryPath, applicationName);
 
@@ -153,7 +152,7 @@ namespace NTDLS.Persistence
                     jsonBytes = compressionProvider.Decompress(jsonBytes);
                 }
 
-                var obj = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(jsonBytes));
+                var obj = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(jsonBytes), settings);
                 return obj;
             }
             return default;
@@ -162,9 +161,9 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T LoadFromDisk<T>(string directoryPath, string applicationName, T defaultResult, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null)
+        public static T LoadFromDisk<T>(string directoryPath, string applicationName, T defaultResult, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
         {
-            var result = LoadFromDisk<T>(directoryPath, applicationName, encryptionProvider, compressionProvider);
+            var result = LoadFromDisk<T>(directoryPath, applicationName, encryptionProvider, compressionProvider, settings);
             if (result == null)
             {
                 return defaultResult;

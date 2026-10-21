@@ -22,14 +22,14 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T? LoadFromDisk<T>(string applicationName, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null)
-            => PathPersistence.LoadFromDisk<T>(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationName, encryptionProvider, compressionProvider);
+        public static T? LoadFromDisk<T>(string applicationName, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
+            => PathPersistence.LoadFromDisk<T>(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationName, encryptionProvider, compressionProvider, settings);
 
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T LoadFromDisk<T>(string applicationName, T defaultResult, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null)
-            => PathPersistence.LoadFromDisk(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationName, defaultResult, encryptionProvider, compressionProvider);
+        public static T LoadFromDisk<T>(string applicationName, T defaultResult, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
+            => PathPersistence.LoadFromDisk(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationName, defaultResult, encryptionProvider, compressionProvider, settings);
 
         /// <summary>
         /// Deletes a persistent file from the disk
@@ -52,13 +52,13 @@ namespace NTDLS.Persistence
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T? LoadFromDiskProtected<T>(string applicationName, ICompressionProvider? compressionProvider = null)
-            => PathPersistence.LoadFromDiskProtected<T>(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationName, compressionProvider);
+        public static T? LoadFromDiskProtected<T>(string applicationName, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
+            => PathPersistence.LoadFromDiskProtected<T>(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationName, compressionProvider, settings);
 
         /// <summary>
         /// Loads the object from disk, deserializes it ans returns the object.
         /// </summary>
-        public static T LoadFromDiskProtected<T>(string applicationName, T defaultResult, ICompressionProvider? compressionProvider = null)
-            => PathPersistence.LoadFromDiskProtected(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationName, defaultResult, compressionProvider);
+        public static T LoadFromDiskProtected<T>(string applicationName, T defaultResult, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
+            => PathPersistence.LoadFromDiskProtected(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), applicationName, defaultResult, compressionProvider, settings);
     }
 }
