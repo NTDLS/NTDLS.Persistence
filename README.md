@@ -81,21 +81,22 @@ CommonApplicationData.SaveToDisk("MyProgramName", settings);
 Pass `JsonSerializerOptions` when you need control over how the object is serialized:
 
 ```csharp
-using Newtonsoft.Json;
+using System.Text.Json;
 using NTDLS.Persistence;
 
-var settings = new JsonSerializerOptions
+var options = new PersistenceOptions
 {
-    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-    Formatting = Formatting.None // compact output instead of indented
+    Json = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
 };
 
-LocalUserApplicationData.SaveToDisk("MyProgramName", preferences, settings);
+// Pass the same options when loading.
+LocalUserApplicationData.SaveToDisk("MyProgramName", preferences, options);
+var loaded = LocalUserApplicationData.LoadFromDisk<UIPreferences>("MyProgramName", options);
 ```
 
 ### Encrypting persisted data
 
-Implement `IEncryptionProvider` and pass it to any save/load call. The provider receives the UTF-8 JSON bytes:
+Implement `IEncryptionProvider` and set it on `PersistenceOptions.Encryption`. The provider receives the UTF-8 JSON bytes:
 
 ```csharp
 using NTDLS.Persistence;
@@ -130,9 +131,18 @@ sealed class MyEncryptionProvider : IEncryptionProvider
 }
 
 // Use it on both save and load — the same provider must be used for both.
-var provider = new MyEncryptionProvider(key, iv);
-LocalUserApplicationData.SaveToDisk("MyProgramName", preferences, provider);
-var loaded = LocalUserApplicationData.LoadFromDisk<UIPreferences>("MyProgramName", provider);
+var options = new PersistenceOptions { Encryption = new MyEncryptionProvider(key, iv) };
+LocalUserApplicationData.SaveToDisk("MyProgramName", preferences, options);
+var loaded = LocalUserApplicationData.LoadFromDisk<UIPreferences>("MyProgramName", options);
+```
+
+### Compression and OS protection
+
+`PersistenceOptions` also takes a compression provider (`RmBrotliCompressionProvider` or `RmDeflateCompressionProvider`) and a `Protect` flag. `Protect` encrypts the data with the operating system (DPAPI on Windows, a per-user key file elsewhere) and stores it in a `.bin` file. On save the order is serialize, compress, encrypt, protect; load reverses it.
+
+```csharp
+var options = new PersistenceOptions { Compression = new RmBrotliCompressionProvider(), Protect = true };
+LocalUserApplicationData.SaveToDisk("MyProgramName", preferences, options);
 ```
 
 ### Deleting a saved file

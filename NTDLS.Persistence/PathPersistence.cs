@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json;
 
 namespace NTDLS.Persistence
@@ -8,167 +8,98 @@ namespace NTDLS.Persistence
     /// </summary>
     public class PathPersistence
     {
+        private const string PlainExtension = "json";
+        private const string ProtectedExtension = "bin";
+
+        private static string GetDataFilePath(string dataPath, Type type, string extension, bool createDirectory)
+        {
+            if (createDirectory && !Directory.Exists(dataPath))
+            {
+                Directory.CreateDirectory(dataPath);
+            }
+
+            string typeName = type.IsGenericType ? type.GetGenericArguments()[0].Name : type.Name;
+            return Path.Combine(dataPath, $"{typeName}.{extension}");
+        }
 
         /// <summary>
         /// Deletes a persistent file from the disk
         /// </summary>
-        public static void DeleteFromDisk(string directoryPath, string applicationName, Type objectType)
+        public static void DeleteFromDisk(string directoryPath, Type objectType)
         {
-            var dataPath = Path.Combine(directoryPath, applicationName);
-            string typeName = objectType.IsGenericType ? objectType.GetGenericArguments()[0].Name : objectType.Name;
-            File.Delete(Path.Combine(dataPath, $"{typeName}.json"));
-            File.Delete(Path.Combine(dataPath, $"{typeName}.bin"));
+            if (!Directory.Exists(directoryPath))
+            {
+                return;
+            }
+
+            File.Delete(GetDataFilePath(directoryPath, objectType, PlainExtension, false));
+            File.Delete(GetDataFilePath(directoryPath, objectType, ProtectedExtension, false));
         }
 
         /// <summary>
         /// Json serializes an object and saves it to the disk.
         /// </summary>
-        public static void SaveToDiskProtected<T>(string directoryPath, string applicationName, T obj, JsonSerializerOptions? settings, ICompressionProvider? compressionProvider = null)
+        public static void SaveToDisk<T>(string directoryPath, T obj, PersistenceOptions? options = null)
         {
-            var dataPath = Path.Combine(directoryPath, applicationName);
+            var json = options?.Json ?? new JsonSerializerOptions { WriteIndented = options?.Protect != true };
+            var dataFilePath = GetDataFilePath(directoryPath, typeof(T), options?.Protect == true ? ProtectedExtension : PlainExtension, true);
 
-            settings ??= new JsonSerializerOptions { WriteIndented = false };
+            var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(obj, json));
 
-            if (!Directory.Exists(dataPath))
+            if (options?.Compression != null)
             {
-                Directory.CreateDirectory(dataPath);
+                bytes = options.Compression.Compress(bytes);
             }
 
-            var type = typeof(T);
-            string typeName = type.IsGenericType ? type.GetGenericArguments()[0].Name : type.Name;
-            var jsonBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(obj, settings)) ?? [];
-
-            if (compressionProvider != null)
+            if (options?.Encryption != null)
             {
-                jsonBytes = compressionProvider.Compress(jsonBytes);
+                bytes = options.Encryption.Encrypt(bytes);
             }
 
-            string dataFilePath = Path.Combine(dataPath, $"{typeName}.bin");
+            if (options?.Protect == true)
+            {
+                bytes = SecretProtector.Protect(bytes) ?? [];
+            }
 
-            File.WriteAllBytes(dataFilePath, SecretProtector.Protect(jsonBytes) ?? []);
+            File.WriteAllBytes(dataFilePath, bytes);
         }
 
         /// <summary>
-        /// Json serializes an object and saves it to the disk.
+        /// Loads the object from disk, deserializes it and returns the object.
         /// </summary>
-        public static void SaveToDisk<T>(string directoryPath, string applicationName, T obj, JsonSerializerOptions? settings, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null)
+        public static T? LoadFromDisk<T>(string directoryPath, PersistenceOptions? options = null)
         {
-            var dataPath = Path.Combine(directoryPath, applicationName);
+            var dataFilePath = GetDataFilePath(directoryPath, typeof(T), options?.Protect == true ? ProtectedExtension : PlainExtension, false);
 
-            settings ??= new JsonSerializerOptions { WriteIndented = true };
-
-            if (!Directory.Exists(dataPath))
+            if (!File.Exists(dataFilePath))
             {
-                Directory.CreateDirectory(dataPath);
+                return default;
             }
 
-            var type = typeof(T);
-            string typeName = type.IsGenericType ? type.GetGenericArguments()[0].Name : type.Name;
+            var bytes = File.ReadAllBytes(dataFilePath);
 
-            var jsonBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(obj, settings));
-            string dataFilePath = Path.Combine(dataPath, $"{typeName}.json");
-
-            if (compressionProvider != null)
+            if (options?.Protect == true)
             {
-                jsonBytes = compressionProvider.Compress(jsonBytes);
+                bytes = SecretProtector.Unprotect(bytes, out _) ?? [];
             }
 
-            if (encryptionProvider != null)
+            if (options?.Encryption != null)
             {
-                jsonBytes = encryptionProvider.Encrypt(jsonBytes);
+                bytes = options.Encryption.Decrypt(bytes);
             }
 
-            File.WriteAllBytes(dataFilePath, jsonBytes);
+            if (options?.Compression != null)
+            {
+                bytes = options.Compression.Decompress(bytes);
+            }
+
+            return JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(bytes), options?.Json);
         }
 
         /// <summary>
-        /// Loads the object from disk, deserializes it ans returns the object.
+        /// Loads the object from disk, deserializes it and returns the object, or the default result if there is no saved object.
         /// </summary>
-        public static T? LoadFromDiskProtected<T>(string directoryPath, string applicationName, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
-        {
-            var dataPath = Path.Combine(directoryPath, applicationName);
-
-            if (!Directory.Exists(dataPath))
-            {
-                Directory.CreateDirectory(dataPath);
-            }
-
-            var type = typeof(T);
-            string typeName = type.IsGenericType ? type.GetGenericArguments()[0].Name : type.Name;
-
-            string dataFilePath = Path.Combine(dataPath, $"{typeName}.bin");
-            if (File.Exists(dataFilePath))
-            {
-                var bytes = SecretProtector.Unprotect(File.ReadAllBytes(dataFilePath), out _) ?? [];
-                if (compressionProvider != null)
-                {
-                    bytes = compressionProvider.Decompress(bytes);
-                }
-                var obj = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(bytes), settings);
-                return obj;
-            }
-            return default;
-        }
-
-        /// <summary>
-        /// Loads the object from disk, deserializes it ans returns the object.
-        /// </summary>
-        public static T LoadFromDiskProtected<T>(string directoryPath, string applicationName, T defaultResult, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
-        {
-            var result = LoadFromDiskProtected<T>(directoryPath, applicationName, compressionProvider, settings);
-            if (result == null)
-            {
-                return defaultResult;
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Loads the object from disk, deserializes it ans returns the object.
-        /// </summary>
-        public static T? LoadFromDisk<T>(string directoryPath, string applicationName, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
-        {
-            var dataPath = Path.Combine(directoryPath, applicationName);
-
-            if (!Directory.Exists(dataPath))
-            {
-                Directory.CreateDirectory(dataPath);
-            }
-
-            var type = typeof(T);
-            string typeName = type.IsGenericType ? type.GetGenericArguments()[0].Name : type.Name;
-
-            string dataFilePath = Path.Combine(dataPath, $"{typeName}.json");
-            if (File.Exists(dataFilePath))
-            {
-                var jsonBytes = File.ReadAllBytes(dataFilePath);
-
-                if (encryptionProvider != null)
-                {
-                    jsonBytes = encryptionProvider.Decrypt(jsonBytes);
-                }
-                if (compressionProvider != null)
-                {
-                    jsonBytes = compressionProvider.Decompress(jsonBytes);
-                }
-
-                var obj = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(jsonBytes), settings);
-                return obj;
-            }
-            return default;
-        }
-
-        /// <summary>
-        /// Loads the object from disk, deserializes it ans returns the object.
-        /// </summary>
-        public static T LoadFromDisk<T>(string directoryPath, string applicationName, T defaultResult, IEncryptionProvider? encryptionProvider = null, ICompressionProvider? compressionProvider = null, JsonSerializerOptions? settings = null)
-        {
-            var result = LoadFromDisk<T>(directoryPath, applicationName, encryptionProvider, compressionProvider, settings);
-            if (result == null)
-            {
-                return defaultResult;
-            }
-            return result;
-        }
+        public static T LoadFromDisk<T>(string directoryPath, T defaultResult, PersistenceOptions? options = null)
+            => LoadFromDisk<T>(directoryPath, options) ?? defaultResult;
     }
 }
