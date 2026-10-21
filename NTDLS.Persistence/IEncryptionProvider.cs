@@ -9,6 +9,7 @@
         /// Encrypts the serialized data.
         /// </summary>
         byte[] Encrypt(byte[] plainTextBytes);
+
         /// Decrypts the serialized data.
         byte[] Decrypt(byte[] encryptedTextBytes);
     }

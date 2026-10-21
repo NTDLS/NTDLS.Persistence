@@ -1,46 +1,46 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0;net10.0;</TargetFrameworks>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <ApplicationIcon>Image.ico</ApplicationIcon>
-    <Title>NTDLS.Persistence</Title>
-    <Authors>NetworkDLS</Authors>
-    <Company>NetworkDLS</Company>
-    <Product>NTDLS.Persistence</Product>
-    <Copyright>Copyright © 2025 NetworkDLS</Copyright>
-    <PackageProjectUrl>https://github.com/NTDLS/NTDLS.Persistence</PackageProjectUrl>
-    <PackageIcon>Image.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/NTDLS/NTDLS.Persistence</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>serialization;disk;persistence</PackageTags>
-    <PackageReleaseNotes>
-      Dependency updates and introduced .net 10 support.
-    </PackageReleaseNotes>
-    <Version>1.3.1</Version>
-    <EnableNETAnalyzers>False</EnableNETAnalyzers>
-    <IncludeSymbols>True</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Description>Helpers for reading and writing serialized objects to/from files. Helpful for configuration files.</Description>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net9.0;net10.0;</TargetFrameworks>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ApplicationIcon>Image.ico</ApplicationIcon>
+		<Title>NTDLS.Persistence</Title>
+		<Authors>NetworkDLS</Authors>
+		<Company>NetworkDLS</Company>
+		<Product>NTDLS.Persistence</Product>
+		<Copyright>Copyright © 2025 NetworkDLS</Copyright>
+		<PackageProjectUrl>https://github.com/NTDLS/NTDLS.Persistence</PackageProjectUrl>
+		<PackageIcon>Image.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/NTDLS/NTDLS.Persistence</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>serialization;disk;persistence</PackageTags>
+		<PackageReleaseNotes>
+			Dependency updates and introduced .net 10 support.
+		</PackageReleaseNotes>
+		<Version>1.4.0</Version>
+		<EnableNETAnalyzers>False</EnableNETAnalyzers>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Description>Helpers for reading and writing serialized objects to/from files. Helpful for configuration files.</Description>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\Images\Image.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\Images\Image.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.13" />
+	</ItemGroup>
 
 </Project>

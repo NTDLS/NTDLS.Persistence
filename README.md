@@ -11,7 +11,7 @@ Use NTDLS.Persistence when you need simple file-based persistence without rollin
 - **Saving configuration files** — application settings, user preferences, connection strings, and similar state that should survive restarts.
 - **Choosing the right storage location automatically** — pick between per-user non-roaming data (`LocalUserApplicationData`), per-user roaming data (`RoamingUserApplicationData`, synced via roaming profiles), or machine-wide data shared by all users (`CommonApplicationData`) with a single class swap.
 - **Encrypting persisted data at rest** — pass any implementation of `IEncryptionProvider` to encrypt the serialized bytes before they touch disk and decrypt them on load.
-- **Customizing serialization** — an overload accepts `JsonSerializerSettings` (Newtonsoft.Json) when you need custom converters, naming strategies, or formatting.
+- **Customizing serialization** — an overload accepts `JsonSerializerOptions` (Newtonsoft.Json) when you need custom converters, naming strategies, or formatting.
 - **Keeping things boringly simple** — no database, no ORM, no registry: just one JSON file per type under `%LOCALAPPDATA%`, `%APPDATA%`, or the common program-data directory.
 
 ## Usage examples
@@ -78,13 +78,13 @@ CommonApplicationData.SaveToDisk("MyProgramName", settings);
 
 ### Custom JSON serialization settings
 
-Pass `JsonSerializerSettings` when you need control over how the object is serialized:
+Pass `JsonSerializerOptions` when you need control over how the object is serialized:
 
 ```csharp
 using Newtonsoft.Json;
 using NTDLS.Persistence;
 
-var settings = new JsonSerializerSettings
+var settings = new JsonSerializerOptions
 {
     ContractResolver = new CamelCasePropertyNamesContractResolver(),
     Formatting = Formatting.None // compact output instead of indented
