@@ -3,9 +3,9 @@
 namespace NTDLS.Persistence
 {
     /// <summary>
-    /// Default compression provider that uses the Brotli compression algorithm.
+    /// Default compression provider that uses the Deflate compression algorithm.
     /// </summary>
-    public class RmBrotliCompressionProvider
+    public class DeflateCompressionProvider
         : ICompressionProvider
     {
         /// <summary>
@@ -14,23 +14,23 @@ namespace NTDLS.Persistence
         public CompressionLevel CompressionLevel { get; private set; }
 
         /// <summary>
-        /// Creates a new instance of the Brotli compression provider with the default compression level.
+        /// Creates a new instance of the Deflate compression provider with the default compression level.
         /// </summary>
-        public RmBrotliCompressionProvider()
+        public DeflateCompressionProvider()
         {
             CompressionLevel = CompressionLevel.Optimal;
         }
 
         /// <summary>
-        /// creates a new instance of the Brotli compression provider with the specified compression level.
+        /// creates a new instance of the Deflate compression provider with the specified compression level.
         /// </summary>
-        public RmBrotliCompressionProvider(CompressionLevel compressionLevel)
+        public DeflateCompressionProvider(CompressionLevel compressionLevel)
         {
             CompressionLevel = compressionLevel;
         }
 
         /// <summary>
-        /// Compresses the payload using Brotli.
+        /// Compresses the payload using deflate.
         /// </summary>
         public byte[] Compress(byte[]? payload)
         {
@@ -39,15 +39,15 @@ namespace NTDLS.Persistence
 
             using var msi = new MemoryStream(payload);
             using var mso = new MemoryStream();
-            using (var brotli = new BrotliStream(mso, CompressionLevel))
+            using (var deflate = new DeflateStream(mso, CompressionLevel))
             {
-                msi.CopyTo(brotli);
+                msi.CopyTo(deflate);
             }
             return mso.ToArray();
         }
 
         /// <summary>
-        /// Decompresses the payload using Brotli.
+        /// Decompresses the payload using deflate.
         /// </summary>
         public byte[] Decompress(byte[]? compressedPayload)
         {
@@ -56,9 +56,9 @@ namespace NTDLS.Persistence
 
             using var msi = new MemoryStream(compressedPayload);
             using var mso = new MemoryStream();
-            using (var brotli = new BrotliStream(msi, CompressionMode.Decompress))
+            using (var deflate = new DeflateStream(msi, CompressionMode.Decompress))
             {
-                brotli.CopyTo(mso);
+                deflate.CopyTo(mso);
             }
             return mso.ToArray();
         }

@@ -138,10 +138,10 @@ var loaded = LocalUserApplicationData.LoadFromDisk<UIPreferences>("MyProgramName
 
 ### Compression and OS protection
 
-`PersistenceOptions` also takes a compression provider (`RmBrotliCompressionProvider` or `RmDeflateCompressionProvider`) and a `Protect` flag. `Protect` encrypts the data with the operating system (DPAPI on Windows, a per-user key file elsewhere) and stores it in a `.bin` file. On save the order is serialize, compress, encrypt, protect; load reverses it.
+`PersistenceOptions` also takes a compression provider (`BrotliCompressionProvider` or `DeflateCompressionProvider`) and a `Protect` flag. `Protect` encrypts the data with the operating system (DPAPI on Windows, a per-user key file elsewhere) and stores it in a `.bin` file. On save the order is serialize, compress, encrypt, protect; load reverses it.
 
 ```csharp
-var options = new PersistenceOptions { Compression = new RmBrotliCompressionProvider(), Protect = true };
+var options = new PersistenceOptions { Compression = new BrotliCompressionProvider(), Protect = true };
 LocalUserApplicationData.SaveToDisk("MyProgramName", preferences, options);
 ```
 
